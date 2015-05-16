@@ -78,6 +78,9 @@ void ofApp::draw(){
 
     ofPushMatrix();
     ofTranslate(ofGetWidth() / 2, ofGetHeight() / 2);
+    
+    ofRotateY(ofGetElapsedTimef() * 360 / 30);
+    ofRotateX(sin(ofGetElapsedTimef()) * 100 / 20);
 
     for (vector<T_3DROTATE_POS>::iterator it = boxPos.begin(); it != boxPos.end(); it++) {
         float noise = ofNoise(it->rotateX, it->rotateY, it->r, ofGetElapsedTimef());
@@ -91,13 +94,13 @@ void ofApp::draw(){
         
         float r = it->r * rRatio + ofMap(noise, 0, 1, -20, 20);
         
-        float size = 10 * sizeRatio + ofMap(noise, 0, 1, -10, 10);
+        float size = 5 * sizeRatio + ofMap(noise, 0, 1, -10, 10);
         
         ofPushMatrix();
         ofRotateX(it->rotateX);
         ofRotateY(it->rotateY);
         ofTranslate(r, 0, 0);
-        ofDrawBox(0, 0, 0, size, size, size);
+        ofDrawSphere(0, 0, 0, size);
         ofPopMatrix();
         
         float z = sin(ofDegToRad(it->rotateY)) * r;
@@ -106,8 +109,11 @@ void ofApp::draw(){
         
         ofLine(0, 0, 0, x, y, z);
     }
+    ofPopMatrix();
     
-    ofTranslate(0, 300, 0);
+    ofPushMatrix();
+
+    ofTranslate(ofGetWidth() / 2, ofGetHeight() / 2 + 300);
     ofSetColor(255, 180);
     font.drawStringCentered(ofToString(energyVal, 2) + " mWh", 0, 0);
     
