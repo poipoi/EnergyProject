@@ -19,6 +19,23 @@ void ofApp::setup(){
     p_gui->addSlider("AnalogValue", 0, 5000, &analogVal, 300, 20);
     p_gui->addSlider("PowerValue", 0, 100, &powerVal, 300, 20);
     p_gui->addSlider("EnergyValue", 0, 10, &energyVal, 300, 20);
+    
+    p_gui->setVisible(false);
+    
+    for (int i = 0; i < 300; i++) {
+        T_3DROTATE_POS pos = {
+            ofRandom(360),
+            ofRandom(360),
+            ofRandom(100, 200)
+        };
+        
+        boxPos.push_back(pos);
+    }
+    
+    ofBackground(0);
+    font.loadFont("frabk.ttf", 30);
+    
+    colorB = 0;
 }
 
 //--------------------------------------------------------------
@@ -50,11 +67,51 @@ void ofApp::update(){
             }
         }
     }
+    
+    colorB = ofMap(sin(ofGetElapsedTimef()), 0, 1, 220, 240);
+    rRatio = ofMap(energyVal, 0, 10, 0, 2, true) * ofMap(sin(ofGetElapsedTimef()), 0, 1, 0.95, 1.05);
+    sizeRatio = ofMap(energyVal, 0, 10, 0.01, 2, true);
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+
+    ofPushMatrix();
+    ofTranslate(ofGetWidth() / 2, ofGetHeight() / 2);
+
+    for (vector<T_3DROTATE_POS>::iterator it = boxPos.begin(); it != boxPos.end(); it++) {
+        float noise = ofNoise(it->rotateX, it->rotateY, it->r, ofGetElapsedTimef());
+        
+        ofSetColor(ofColor::fromHsb(
+            ofWrap(40 + ofMap(noise, 0, 1, -40, 40), 0, 255),
+            255,
+            ofClamp(colorB + ofMap(noise, 0, 1, -30, 30), 0, 255),
+            ofClamp(50 + ofMap(noise, 0, 1, -50, 50), 0, 255)
+        ));
+        
+        float r = it->r * rRatio + ofMap(noise, 0, 1, -20, 20);
+        
+        float size = 10 * sizeRatio + ofMap(noise, 0, 1, -10, 10);
+        
+        ofPushMatrix();
+        ofRotateX(it->rotateX);
+        ofRotateY(it->rotateY);
+        ofTranslate(r, 0, 0);
+        ofDrawBox(0, 0, 0, size, size, size);
+        ofPopMatrix();
+        
+        float z = sin(ofDegToRad(it->rotateY)) * r;
+        float x = cos(ofDegToRad(it->rotateY)) * r;
+        float y = sin(ofDegToRad(it->rotateX)) * z;
+        
+        ofLine(0, 0, 0, x, y, z);
+    }
     
+    ofTranslate(0, 300, 0);
+    ofSetColor(255, 180);
+    font.drawStringCentered(ofToString(energyVal, 2) + " mWh", 0, 0);
+    
+    ofPopMatrix();
 }
 
 void ofApp::newResponse(ofxHttpResponse & response) {
@@ -86,6 +143,10 @@ void ofApp::keyPressed(int key){
     
         // reset energy
         energyVal = 0;
+
+    } else if (key == 'm') {
+        p_gui->toggleVisible();
+        
     }
 }
 

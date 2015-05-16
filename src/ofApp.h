@@ -5,6 +5,7 @@
 #include "ofxHttpUtils.h"
 #include "ofxUI.h"
 #include "ofxJSON.h"
+#include "ofxCenteredTrueTypeFont.h"
 
 class ofApp : public ofBaseApp{
 
@@ -35,4 +36,19 @@ class ofApp : public ofBaseApp{
     string url;
     
     ofxUICanvas *p_gui;
+    
+    vector<ofBoxPrimitive> boxies;
+    
+    typedef struct {
+        float rotateX;
+        float rotateY;
+        float r;
+    } T_3DROTATE_POS;
+    
+    vector<T_3DROTATE_POS> boxPos;
+    float colorB;
+    float rRatio;
+    float sizeRatio;
+    
+    ofxCenteredTrueTypeFont font;
 };

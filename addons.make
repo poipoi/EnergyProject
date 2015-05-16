@@ -2,3 +2,5 @@ ofxXmlSettings
 ofxHttpUtils
 ofxJSON
 ofxUI
+ofxStateMachine
+ofxCenteredTrueTypeFont
