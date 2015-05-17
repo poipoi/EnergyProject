@@ -40,30 +40,37 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    if (twelite.isInitialized() && twelite.available()) {
-        unsigned char valChar = twelite.readByte();
-        buff += valChar;
+    if (twelite.isInitialized()) {
+        int len = twelite.available();
+        if (len != 0) {
+            unsigned char* p_buff = new unsigned char[len];
+            twelite.readBytes(p_buff, len);
+            for (int i = 0; i < len; i++) {
+                buff += p_buff[i];
+            }
+            delete [] p_buff;
 
-        if (buff.c_str()[buff.length() - 1] == '\n') {
-            if (buff.c_str()[buff.length() - 2] == '\r') {
-                if (buff.c_str()[0] == ':') {
-                    if (buff.length() == 51) {
-                        string dataStr = buff.substr(1, 48);
-                        // cout << dataStr << std::endl;
+            if (buff.c_str()[buff.length() - 1] == '\n') {
+                if (buff.c_str()[buff.length() - 2] == '\r') {
+                    if (buff.c_str()[0] == ':') {
+                        if (buff.length() == 51) {
+                            string dataStr = buff.substr(1, 48);
+                            // cout << dataStr << std::endl;
                         
-                        int a0 = ofHexToInt(dataStr.substr(36, 2));
-                        int f = ofHexToInt(dataStr.substr(44, 2));
-                        int f0 = f & 0x03;
+                            int a0 = ofHexToInt(dataStr.substr(36, 2));
+                            int f = ofHexToInt(dataStr.substr(44, 2));
+                            int f0 = f & 0x03;
                         
-                        analogVal = (a0 * 4 + f0) * 4;
-                        powerVal = analogVal * analogVal / 100000;
-                        energyVal += powerVal / 3600;
+                            analogVal = (a0 * 4 + f0) * 4;
+                            powerVal = analogVal * analogVal / 100000;
+                            energyVal += powerVal / 3600;
                         
-                        // cout << a0 << ":" << f << ":" << analogVal << ":" << powerVal << ":" << energyVal << endl;
+                            // cout << a0 << ":" << f << ":" << analogVal << ":" << powerVal << ":" << energyVal << endl;
+                        }
                     }
-                }
                 
-                buff.clear();
+                    buff.clear();
+                }
             }
         }
     }
