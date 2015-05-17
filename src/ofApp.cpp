@@ -62,7 +62,7 @@ void ofApp::update(){
                             int f0 = f & 0x03;
                         
                             analogVal = (a0 * 4 + f0) * 4;
-                            powerVal = analogVal * analogVal / 100000;
+                            powerVal = analogVal * analogVal / 100000 * 2;
                             energyVal += powerVal / 3600;
                         
                             // cout << a0 << ":" << f << ":" << analogVal << ":" << powerVal << ":" << energyVal << endl;
@@ -93,7 +93,7 @@ void ofApp::draw(){
         float noise = ofNoise(it->rotateX, it->rotateY, it->r, ofGetElapsedTimef());
         
         ofSetColor(ofColor::fromHsb(
-            ofWrap(150 - ofMap(analogVal, 0, 3300, 0, 150, true) + ofMap(noise, 0, 1, -40, 40), 0, 255),
+            ofWrap(150 - ofMap(analogVal, 0, 1300, 0, 150, true) + ofMap(noise, 0, 1, -40, 40), 0, 255),
             255,
             ofClamp(colorB + ofMap(noise, 0, 1, -30, 30), 0, 255),
             ofClamp(50 + ofMap(noise, 0, 1, -50, 50), 0, 255)
