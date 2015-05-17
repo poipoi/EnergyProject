@@ -93,7 +93,7 @@ void ofApp::draw(){
         float noise = ofNoise(it->rotateX, it->rotateY, it->r, ofGetElapsedTimef());
         
         ofSetColor(ofColor::fromHsb(
-            ofWrap(40 + ofMap(noise, 0, 1, -40, 40), 0, 255),
+            ofWrap(150 - ofMap(analogVal, 0, 3300, 0, 150, true) + ofMap(noise, 0, 1, -40, 40), 0, 255),
             255,
             ofClamp(colorB + ofMap(noise, 0, 1, -30, 30), 0, 255),
             ofClamp(50 + ofMap(noise, 0, 1, -50, 50), 0, 255)
