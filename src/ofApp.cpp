@@ -32,6 +32,14 @@ void ofApp::setup(){
         boxPos.push_back(pos);
     }
     
+    buttonImg.loadImage("button.png");
+    buttonRect.set(
+        (ofGetWidth() / 2) - ((float)buttonImg.width / 2),
+        700 - buttonImg.height / 2,
+        buttonImg.width,
+        buttonImg.height
+    );
+    
     ofBackground(0);
     font.loadFont("frabk.ttf", 30);
     
@@ -120,11 +128,14 @@ void ofApp::draw(){
     
     ofPushMatrix();
 
-    ofTranslate(ofGetWidth() / 2, ofGetHeight() / 2 + 300);
-    ofSetColor(255, 180);
+    ofTranslate(ofGetWidth() / 2, ofGetHeight() / 2 + 200);
+    ofSetColor(200, 180);
     font.drawStringCentered(ofToString(energyVal, 2) + " mWh", 0, 0);
     
     ofPopMatrix();
+    
+    ofSetColor(255, 200);
+    buttonImg.draw(buttonRect);
 }
 
 void ofApp::newResponse(ofxHttpResponse & response) {
@@ -132,31 +143,35 @@ void ofApp::newResponse(ofxHttpResponse & response) {
     std::cout << responseStr << std::endl;
 }
 
-//--------------------------------------------------------------
-void ofApp::keyPressed(int key){
-    if (key == 32) {        // 32 is key code of SPACE KEY
-
-        ofxJSONElement json;
-        json["device_id"]   = 0;
-        json["user_name"]   = "izumida";
-        json["lat"]         = 35.41;
-        json["lng"]         = 139.41;
-        json["solar"]       = energyVal;
-        
-        cout << json.getRawString() << endl;
-        
-        ofBuffer buff;
-        buff.set(json.getRawString());
+void ofApp::sendDataForServer(void) {
     
-        httpUtils.postData(
+    ofxJSONElement json;
+    json["device_id"]   = 0;
+    json["user_name"]   = "izumida";
+    json["lat"]         = 35.41;
+    json["lng"]         = 139.41;
+    json["solar"]       = energyVal;
+    
+    cout << json.getRawString() << endl;
+    
+    ofBuffer buff;
+    buff.set(json.getRawString());
+    
+    httpUtils.postData(
                        url,
                        buff,
                        "application/json"
                        );
     
-        // reset energy
-        energyVal = 0;
+    // reset energy
+    energyVal = 0;
+}
 
+//--------------------------------------------------------------
+void ofApp::keyPressed(int key){
+    if (key == 32) {        // 32 is key code of SPACE KEY
+        sendDataForServer();
+        
     } else if (key == 'm') {
         p_gui->toggleVisible();
         
@@ -185,7 +200,9 @@ void ofApp::mousePressed(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
-
+    if (buttonRect.inside(x, y)) {
+        sendDataForServer();
+    }
 }
 
 //--------------------------------------------------------------

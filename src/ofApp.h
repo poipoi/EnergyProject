@@ -15,7 +15,8 @@ class ofApp : public ofBaseApp{
 		void draw();
     
         void newResponse(ofxHttpResponse & response);
-
+        void sendDataForServer(void);
+    
 		void keyPressed(int key);
 		void keyReleased(int key);
 		void mouseMoved(int x, int y );
@@ -51,4 +52,7 @@ class ofApp : public ofBaseApp{
     float sizeRatio;
     
     ofxCenteredTrueTypeFont font;
+    
+    ofImage buttonImg;
+    ofRectangle buttonRect;
 };
